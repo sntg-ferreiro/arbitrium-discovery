@@ -19,7 +19,7 @@ class HealthChecker(
     var nodeRepository: NodeRepository
 ) {
     companion object{
-        val logger = Logger.getLogger(this::class.java.simpleName)
+        val logger: Logger = Logger.getLogger(this::class.java.simpleName)
     }
 
 
@@ -31,14 +31,14 @@ class HealthChecker(
         } catch (e: HttpClientErrorException){
             logger.warning("$node is NOT OK!")
             errorRepository.save(NodeHealthError(node.id, Instant.now().toString(), e.rawStatusCode))
-        } catch (e: ConnectException){
+        } catch (e: Exception){
             logger.warning("$node is NOT OK!")
             errorRepository.save(NodeHealthError(node.id, Instant.now().toString(), 500))
         }
     }
 
     fun doGralHealthCheck(){
-        var nodes = nodeRepository.findAll()
+        val nodes = nodeRepository.findAll()
         nodes.map {n ->  healthCheck(n) }
     }
 }
