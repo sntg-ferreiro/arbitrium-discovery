@@ -7,19 +7,14 @@ import ar.com.arbitrium.discovery.repository.NodeHealthErrorRepository
 import ar.com.arbitrium.discovery.repository.NodeRepository
 import ar.com.arbitrium.discovery.service.HealthChecker
 import ar.com.arbitrium.discovery.service.Miner
-import ar.com.arbitrium.discovery.service.PeerService
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.support.AbstractMultipartHttpServletRequest
-import java.util.logging.Logger
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @RequestMapping
 @RestController
 class Discovery(var checker: HealthChecker,
                 var nodeRepository: NodeRepository,
                 var errorRepository: NodeHealthErrorRepository,
-                var miner: Miner,
-                var peers: PeerService
+                var miner: Miner
 ) {
 
     @GetMapping
@@ -27,9 +22,6 @@ class Discovery(var checker: HealthChecker,
 
     @PostMapping()
     fun addNewNode(@RequestBody node: Node) = nodeRepository.save(node)
-
-    @GetMapping("/nuevo-peer")
-    fun newPeer() = peers.nuevo()
 
     @GetMapping("/health")
     fun doCheck() = checker.doGralHealthCheck()

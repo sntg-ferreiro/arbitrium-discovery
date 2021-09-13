@@ -1,10 +1,15 @@
 package ar.com.arbitrium.discovery.service
 
+import ar.com.arbitrium.discovery.model.ResultadoDecision
+import ar.com.arbitrium.discovery.model.Salida
 import ar.com.arbitrium.discovery.model.Transaccion
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 import org.springframework.web.client.getForEntity
 import org.springframework.web.client.postForEntity
 import java.util.logging.Logger
@@ -35,25 +40,36 @@ class Miner(
         this.transacciones.addAll(txs)
     }
 
-
-
     private fun llamarMineroRandom() {
-
-        val url: String = urlNodoBc()
-        logger.info("REQUEST: <URL $url>")
-        val res: ResponseEntity<LinkedHashMap<String, Any>> = restTemplate.postForEntity(url, transacciones)
-        logger.info("RESPONSE: <URL $url - RES: $res> ")
+        var res: Any? = llamarNodo("", HttpMethod.POST, HttpEntity(transacciones))
         this.transacciones.clear()
     }
 
-    fun buscarResultadosDecision(idOrg: Long, idDec: Long): List<Any>? {
-        val url: String = "${urlNodoBc()}/resultados/$idOrg/$idDec"
+    fun buscarResultadosDecision(idOrg: Long, idDec: Long): List<ResultadoDecision> {
+        val endpoint = "/resultados/$idOrg/$idDec"
+        val o: List<Salida>? =  llamarNodo(endpoint, HttpMethod.GET, HttpEntity.EMPTY as HttpEntity<Any>)
+        return ResultadoDecision.desdeLista(o)
+    }
+
+    private inline fun <reified T> llamarNodo(endpoint: String, method: HttpMethod, entity: HttpEntity<Any>): T? {
+        val url = "${urlNodoBc()}$endpoint"
         logger.info("REQUEST: <URL $url>")
-        val res: ResponseEntity<List<Any>> = restTemplate.getForEntity(url)
-        logger.info("RESPONSE: <URL $url - RES: $res> ")
-        return res.body
+        return try{
+            val res: ResponseEntity<T> = restTemplate.exchange(url, method,entity)
+            logger.info("RESPONSE: <URL $url - RES: $res> ")
+            res.body
+        }catch (e: Exception){
+            //retry
+            val url2: String = "${urlNodoBc(0)}$endpoint"
+            logger.info("REQUEST: <URL $url2>")
+            val res: ResponseEntity<T> = restTemplate.exchange(url2, method,entity)
+            logger.info("RESPONSE: <URL $url2 - RES: $res> ")
+            res.body
+        }
+
     }
 
     private fun urlNodoBc(): String = "${pares[Random(System.nanoTime()).nextInt(0, pares.size)]}/bc"
+    private fun urlNodoBc(i: Int): String = "${pares[i]}/bc"
 
 }
