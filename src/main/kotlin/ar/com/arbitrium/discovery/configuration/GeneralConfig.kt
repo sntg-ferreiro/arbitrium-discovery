@@ -10,6 +10,6 @@ import java.time.Duration
 class GeneralConfig {
     @Bean
     fun restTemplate(): RestTemplate = RestTemplateBuilder()
-        .setConnectTimeout(Duration.ofSeconds(10))
+        .setConnectTimeout(Duration.ofSeconds(30))
         .build()
 }
