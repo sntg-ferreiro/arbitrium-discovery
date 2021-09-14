@@ -5,8 +5,8 @@ class ResultadoDecision(var opcion: Long, var total: Int ) {
     companion object{
         fun desdeLista(salidas: List<Salida>?): List<ResultadoDecision>{
             val o: MutableList<ResultadoDecision> = mutableListOf()
-            var rd = ResultadoDecision(0,0)
-            for (s in salidas?.sortedBy { it.idDecision }!!){
+            var rd = ResultadoDecision(Long.MIN_VALUE,Int.MIN_VALUE)
+            for (s in salidas?.sortedBy { it.idOpcion }!!){
                 if (rd.opcion == s.idOpcion) rd.total++
                 else {
                     o.add(rd)
