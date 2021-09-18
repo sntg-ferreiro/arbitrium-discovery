@@ -27,6 +27,24 @@ class Miner(
         val logger: Logger = Logger.getLogger(this::class.java.simpleName)
     }
 
+    fun checkSalud(): LinkedHashMap<String, String> {
+        var resultado: LinkedHashMap<String, String> = linkedMapOf()
+        pares.forEach {
+            var res: ResponseEntity<String>? = null
+            try {
+                res = restTemplate.exchange("$it/actuator/health", HttpMethod.GET)
+            }catch (e: Exception){
+                logger.info("EXCEPTION! [CLASS: ${e.javaClass} - MSG: ${e.localizedMessage}]")
+                resultado[it] = e.localizedMessage
+            }
+
+            if (res != null) {
+                logger.info("Nodo: $it - Salud: ${res.body}")
+                res.body?.let { status -> resultado[it] = status }
+            }
+        }
+        return resultado
+    }
     fun mine(txs: MutableList<Transaccion>): MutableList<Transaccion> {
         logger.info("Agregando txs a transacciones... ")
         agregarTransacciones(txs)
