@@ -10,12 +10,14 @@
 	</parent>
 	<groupId>ar.com.arbitrium</groupId>
 	<artifactId>discovery</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>discovery</name>
-	<description>Demo project for Spring Boot</description>
+	<description>discovery-server para la blockchain Arbitrium</description>
 	<properties>
+		<maven.test.skip>true</maven.test.skip>
 		<java.version>11</java.version>
 		<kotlin.version>1.5.21</kotlin.version>
+		<dockerfile-maven-version>1.4.13</dockerfile-maven-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -72,6 +74,7 @@
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
