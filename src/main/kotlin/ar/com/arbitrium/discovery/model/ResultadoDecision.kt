@@ -14,7 +14,7 @@ class ResultadoDecision(var opcion: Long, var total: Int ) {
                 }
             }
             o.add(rd)
-            return o
+            return o.filter { it.opcion != Long.MIN_VALUE }
         }
     }
 }
