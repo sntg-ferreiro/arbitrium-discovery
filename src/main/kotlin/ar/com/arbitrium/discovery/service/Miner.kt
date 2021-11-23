@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
-import org.springframework.web.client.getForEntity
-import org.springframework.web.client.postForEntity
 import java.util.logging.Logger
 import kotlin.random.Random
 
@@ -19,7 +17,7 @@ import kotlin.random.Random
 class Miner(
     val restTemplate: RestTemplate,
     var transacciones: MutableList<Transaccion>,
-    @Value("\${limite}", )val limite_transac: Int,
+    @Value("\${limite}", )val limiteTransac: Int,
     @Value("#{'\${pares}'.split(',')}") val pares: MutableList<String>
 ) {
 
@@ -48,18 +46,17 @@ class Miner(
     fun mine(txs: MutableList<Transaccion>): MutableList<Transaccion> {
         logger.info("Agregando txs a transacciones... ")
         agregarTransacciones(txs)
-        if(transacciones.size >= limite_transac) llamarMineroRandom()
+        if(transacciones.size >= limiteTransac) llamarMineroRandom()
         logger.info("Ahora tenemos: ${transacciones.size} transacciones!")
         return transacciones
     }
 
     private fun agregarTransacciones(txs: MutableList<Transaccion>) {
-        //TODO: LOGICA DE SI LLEGA UNA TRANSACCION CON INPUT YA EN EL POOL
         this.transacciones.addAll(txs)
     }
 
     private fun llamarMineroRandom() {
-        var res: Any? = llamarNodo("", HttpMethod.POST, HttpEntity(transacciones))
+        //var res: Any? = llamarNodo("", HttpMethod.POST, HttpEntity(transacciones))
         this.transacciones.clear()
     }
 
