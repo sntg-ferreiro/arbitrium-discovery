@@ -56,7 +56,7 @@ class Miner(
     }
 
     private fun llamarMineroRandom() {
-        //var res: Any? = llamarNodo("", HttpMethod.POST, HttpEntity(transacciones))
+        llamarNodo<Any?>("", HttpMethod.POST, HttpEntity(transacciones))
         this.transacciones.clear()
     }
 
